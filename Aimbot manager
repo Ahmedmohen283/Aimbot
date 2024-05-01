@@ -1,0 +1,71 @@
+using System;
+using System.Runtime.InteropServices;
+using System.Threading;
+
+class Program
+{
+    [DllImport("user32.dll")]
+    static extern short GetAsyncKeyState(int vKey);
+
+    const int VK_SHIFT = 0x10;
+    const int VK_F1 = 0x70; // زر F1 لتفعيل/تعطيل aimbot
+    const int VK_F2 = 0x71; // زر F2 لإلغاء استهداف الهدف الحالي
+
+    static bool aimbotEnabled = false;
+    static bool targetLocked = false;
+
+    static void Main()
+    {
+        Console.WriteLine("Press Shift to toggle aimbot.");
+        Console.WriteLine("Press F1 to toggle aimbot.");
+        Console.WriteLine("Press F2 to unlock target.");
+
+        while (true)
+        {
+            if (IsKeyPressed(VK_SHIFT) || IsKeyPressed(VK_F1))
+            {
+                ToggleAimbot();
+                Thread.Sleep(200); // انتظار لتفادي التكرار في الضغط
+            }
+
+            if (IsKeyPressed(VK_F2))
+            {
+                UnlockTarget();
+                Thread.Sleep(200); // انتظار لتفادي التكرار في الضغط
+            }
+
+            if (aimbotEnabled && !targetLocked)
+            {
+                // تحديد واستهداف العدو الأقرب
+                TargetNearestEnemy();
+            }
+
+            Thread.Sleep(10); // تأخير قصير لتخفيف الاستهلاك
+        }
+    }
+
+    static bool IsKeyPressed(int keyCode)
+    {
+        return (GetAsyncKeyState(keyCode) & 0x8000) != 0;
+    }
+
+    static void ToggleAimbot()
+    {
+        aimbotEnabled = !aimbotEnabled;
+        Console.WriteLine("Aimbot " + (aimbotEnabled ? "enabled" : "disabled"));
+    }
+
+    static void UnlockTarget()
+    {
+        targetLocked = false;
+        Console.WriteLine("Target unlocked");
+    }
+
+    static void TargetNearestEnemy()
+    {
+        // يمكنك تحديد واستهداف العدو الأقرب هنا
+        // على سبيل المثال:
+        // - قم بالبحث عن العدو الأقرب بالاستعانة بالذكاء الاصطناعي
+        // - قم بتوجيه ال aim نحوه
+    }
+}
